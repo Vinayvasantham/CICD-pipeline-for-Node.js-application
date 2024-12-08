@@ -1,11 +1,9 @@
 pipeline {
-    agent {
-        docker { image 'node:16' }
-    }
+    agent any
 
     environment {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:${BUILD_NUMBER}'
-        KUBECONFIG = credentials('kubeconfig-credential-id') // Kubernetes config
+        KUBECONFIG = "$HOME/.kube/config" // Default location for Minikube's kubeconfig
     }
 
     stages {
@@ -27,21 +25,25 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 sh """
                 docker build -t ${DOCKER_IMAGE} .
-                docker login -u vinayvasantham -p Vinay@123
+                docker login -u your-dockerhub-username -p your-dockerhub-password
                 docker push ${DOCKER_IMAGE}
                 """
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Minikube') {
             steps {
-                sh """
-                kubectl apply -f kubernetes/deployment.yaml
-                """
+                script {
+                    // Modify the Kubernetes manifest to use the current image
+                    sh """
+                    sed -i 's|vinayvasantham/nodejs-app:latest|${DOCKER_IMAGE}|g' kubernetes/deployment.yaml
+                    kubectl apply -f kubernetes/deployment.yaml
+                    """
+                }
             }
         }
     }
