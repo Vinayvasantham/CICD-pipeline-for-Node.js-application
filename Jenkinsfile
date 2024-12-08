@@ -7,9 +7,15 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Vinayvasantham/CICD-pipeline-for-Node.js-application.git'
+                script {
+                    withCredentials([string(credentialsId: 'GitHub-AuthToken', variable: 'GITHUB_TOKEN')]) {
+                        git url: 'https://github.com/Vinayvasantham/CICD-pipeline-for-Node.js-application.git',
+                            branch: 'main',
+                            credentialsId: 'GitHub-AuthToken'
+                    }
+                }
             }
         }
 
