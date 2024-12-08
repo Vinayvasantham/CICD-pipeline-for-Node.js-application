@@ -7,6 +7,9 @@ pipeline {
     }
 
     stages {
+        tools {
+            git 'Default' // Name of your configured Git tool
+        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Vinayvasantham/CICD-pipeline-for-Node.js-application.git'
