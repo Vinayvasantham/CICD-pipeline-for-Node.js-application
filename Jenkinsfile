@@ -1,15 +1,14 @@
 pipeline {
     agent any
-
+    tools {
+            git 'Default' // Name of your configured Git tool
+        }
     environment {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:${BUILD_NUMBER}'
         KUBECONFIG = "$HOME/.kube/config" // Default location for Minikube's kubeconfig
     }
 
     stages {
-        tools {
-            git 'Default' // Name of your configured Git tool
-        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Vinayvasantham/CICD-pipeline-for-Node.js-application.git'
