@@ -51,8 +51,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 bat '''
-                kubectl apply -f %K8S_DEPLOYMENT_PATH%
-                kubectl apply -f %K8S_SERVICE_PATH%
+                kubectl apply -f %K8S_DEPLOYMENT_PATH% --validate=false
+                kubectl apply -f %K8S_SERVICE_PATH% --validate=false
                 '''
             }
         }
