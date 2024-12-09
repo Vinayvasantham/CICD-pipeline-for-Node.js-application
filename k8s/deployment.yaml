@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: vinayvasantham/nodejs-app:${BUILD_NUMBER}
+        image: vinayvasantham/nodejs-app:latest
         ports:
         - containerPort: 3000
