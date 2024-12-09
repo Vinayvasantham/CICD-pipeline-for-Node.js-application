@@ -56,6 +56,7 @@ pipeline {
                     bat '''
                     echo Authenticating with Kubernetes using KUBECONFIG
                     set KUBECONFIG=%KUBECONFIG%
+                    powershell -Command "(Get-Content k8s/deployment.yaml) | ForEach-Object { $_ -replace '\${BUILD_NUMBER}', '%BUILD_NUMBER%' } | Set-Content k8s/deployment.yaml"
                     kubectl apply -f %K8S_DEPLOYMENT_PATH% --validate=false
                     kubectl apply -f %K8S_SERVICE_PATH% --validate=false
                     '''
