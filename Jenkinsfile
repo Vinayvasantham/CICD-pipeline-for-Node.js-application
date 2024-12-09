@@ -64,4 +64,16 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            mail to: 'vinayvasantham7@gmail.com',
+                 subject: "Deployment Success: ${DOCKER_IMAGE}",
+                 body: "The application was successfully deployed to Kubernetes."
+        }
+        failure {
+            mail to: 'vinayvasantham7@gmail.com',
+                 subject: "Deployment Failure: ${DOCKER_IMAGE}",
+                 body: "The deployment failed. Please check the Jenkins logs."
+        }
+    }
 }
