@@ -4,7 +4,7 @@ pipeline {
         nodejs 'NodeJS' // Use the name you configured in Jenkins
     }
     environment {
-        DOCKER_IMAGE = 'vinayvasantham/nodejs-app:%BUILD_NUMBER%'
+        DOCKER_IMAGE = 'vinayvasantham/nodejs-app:latest'
         K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
         K8S_SERVICE_PATH = 'k8s/service.yaml'
         KUBECONFIG = 'C:\\Users\\vinay\\.kube\\config'  // Set the path to your kubeconfig file
