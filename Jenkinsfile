@@ -5,8 +5,8 @@ pipeline {
     }
     environment {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:%BUILD_NUMBER%'
-        K8S_DEPLOYMENT_PATH = 'kubernetes/deployment.yaml'
-        K8S_SERVICE_PATH = 'kubernetes/service.yaml'
+        K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
+        K8S_SERVICE_PATH = 'k8s/service.yaml'
     }
     stages {
         stage('Checkout') {
