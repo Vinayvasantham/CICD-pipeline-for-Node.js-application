@@ -56,7 +56,6 @@ pipeline {
                     bat '''
                     echo Authenticating with Kubernetes using KUBECONFIG
                     set KUBECONFIG=%KUBECONFIG%
-                    powershell -Command "(Get-Content k8s/deployment.yaml) | ForEach-Object { $_ -replace '\${BUILD_NUMBER}', '%BUILD_NUMBER%' } | Set-Content k8s/deployment.yaml"
                     kubectl apply -f %K8S_DEPLOYMENT_PATH% --validate=false
                     kubectl apply -f %K8S_SERVICE_PATH% --validate=false
                     '''
@@ -68,12 +67,28 @@ pipeline {
         success {
             mail to: 'vinayvasantham7@gmail.com',
                  subject: "Deployment Success: ${DOCKER_IMAGE}",
-                 body: "The application was successfully deployed to Kubernetes."
+                 body: """
+                 The application was successfully deployed to Kubernetes.
+                 
+                 Deployment Details:
+                 - Docker Image: ${DOCKER_IMAGE}
+                 - Job Name: ${env.JOB_NAME}
+                 - Build Number: ${env.BUILD_NUMBER}
+                 - Build URL: ${env.BUILD_URL}
+                 """
         }
         failure {
             mail to: 'vinayvasantham7@gmail.com',
                  subject: "Deployment Failure: ${DOCKER_IMAGE}",
-                 body: "The deployment failed. Please check the Jenkins logs."
+                 body: """
+                 The deployment failed. Please check the Jenkins logs for details.
+                 
+                 Deployment Details:
+                 - Docker Image: ${DOCKER_IMAGE}
+                 - Job Name: ${env.JOB_NAME}
+                 - Build Number: ${env.BUILD_NUMBER}
+                 - Build URL: ${env.BUILD_URL}
+                 """
         }
     }
 }
