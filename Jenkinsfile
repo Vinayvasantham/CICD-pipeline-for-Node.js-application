@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'vinayvasantham/nodejs-app:${BUILD_NUMBER}'
+        DOCKER_IMAGE = 'vinayvasantham/nodejs-app:%BUILD_NUMBER%'
         K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
         K8S_SERVICE_PATH = 'k8s/service.yaml'
     }
@@ -13,12 +13,12 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                bat 'npm test'
             }
         }
         stage('Build Docker') {
@@ -39,7 +39,7 @@ pipeline {
                         echo Logging in to DockerHub
                         docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
                         echo Pushing Docker Image
-                        docker push vinayvasantham/todo-app-cicd:%BUILD_NUMBER%
+                        docker push vinayvasantham/nodejs-app:%BUILD_NUMBER%
                         '''
                     }
                 }
@@ -47,8 +47,10 @@ pipeline {
        }
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f ${K8S_DEPLOYMENT_PATH}'
-                sh 'kubectl apply -f ${K8S_SERVICE_PATH}'
+                bat '''
+                kubectl apply -f %K8S_DEPLOYMENT_PATH%
+                kubectl apply -f %K8S_SERVICE_PATH%
+                '''
             }
         }
     }
