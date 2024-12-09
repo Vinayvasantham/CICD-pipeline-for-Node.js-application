@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'NodeJS' // Use the name you configured in Jenkins
+    }
     environment {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:%BUILD_NUMBER%'
         K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
