@@ -43,7 +43,7 @@ pipeline {
                         echo Logging in to DockerHub
                         docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
                         echo Pushing Docker Image
-                        docker push vinayvasantham/nodejs-app:%BUILD_NUMBER%
+                        docker push vinayvasantham/nodejs-app:latest
                         '''
                     }
                 }
