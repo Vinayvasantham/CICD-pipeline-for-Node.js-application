@@ -1,65 +1,55 @@
 pipeline {
     agent any
-    tools {
-            git 'Default' // Name of your configured Git tool
-        }
     environment {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:${BUILD_NUMBER}'
-        KUBECONFIG = "$HOME/.kube/config" // Default location for Minikube's kubeconfig
+        K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
+        K8S_SERVICE_PATH = 'k8s/service.yaml'
     }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Vinayvasantham/CICD-pipeline-for-Node.js-application.git'
+                checkout scm
             }
         }
-
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
-
         stage('Run Tests') {
             steps {
                 sh 'npm test'
             }
         }
-
-        stage('Build and Push Docker Image') {
-            steps {
-                sh """
-                docker build -t ${DOCKER_IMAGE} .
-                docker login -u vinayvasantham -p Vinay@123
-                docker push ${DOCKER_IMAGE}
-                """
-            }
-        }
-
-        stage('Deploy to Minikube') {
+        stage('Build Docker') {
             steps {
                 script {
-                    // Modify the Kubernetes manifest to use the current image
-                    sh """
-                    sed -i 's|vinayvasantham/nodejs-app:latest|${DOCKER_IMAGE}|g' kubernetes/deployment.yaml
-                    kubectl apply -f kubernetes/deployment.yaml
-                    """
+                    bat '''
+                    echo Building Docker Image
+                    docker build -t vinayvasantham/nodejs-app:%BUILD_NUMBER% .
+                    '''
                 }
             }
         }
-    }
-
-    post {
-        success {
-            mail to: 'vinayvasantham7@gmail.com',
-                 subject: "Deployment Success: ${DOCKER_IMAGE}",
-                 body: "The application was successfully deployed to Kubernetes."
-        }
-        failure {
-            mail to: 'vinayvasantham7@gmail.com',
-                 subject: "Deployment Failure: ${DOCKER_IMAGE}",
-                 body: "The deployment failed. Please check the Jenkins logs."
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat '''
+                        echo Logging in to DockerHub
+                        docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%
+                        echo Pushing Docker Image
+                        docker push vinayvasantham/todo-app-cicd:%BUILD_NUMBER%
+                        '''
+                    }
+                }
+            }
+       }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f ${K8S_DEPLOYMENT_PATH}'
+                sh 'kubectl apply -f ${K8S_SERVICE_PATH}'
+            }
         }
     }
 }
