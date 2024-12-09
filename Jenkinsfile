@@ -7,6 +7,7 @@ pipeline {
         DOCKER_IMAGE = 'vinayvasantham/nodejs-app:%BUILD_NUMBER%'
         K8S_DEPLOYMENT_PATH = 'k8s/deployment.yaml'
         K8S_SERVICE_PATH = 'k8s/service.yaml'
+        KUBECONFIG = 'C:\\Users\\vinay\\.kube\\config'  // Set the path to your kubeconfig file
     }
     stages {
         stage('Checkout') {
@@ -47,13 +48,18 @@ pipeline {
                     }
                 }
             }
-       }
+        }
         stage('Deploy to Kubernetes') {
             steps {
-                bat '''
-                kubectl apply -f %K8S_DEPLOYMENT_PATH% --validate=false
-                kubectl apply -f %K8S_SERVICE_PATH% --validate=false
-                '''
+                script {
+                    // Set the KUBECONFIG environment variable before running kubectl commands
+                    bat '''
+                    echo Authenticating with Kubernetes using KUBECONFIG
+                    set KUBECONFIG=%KUBECONFIG%
+                    kubectl apply -f %K8S_DEPLOYMENT_PATH% --validate=false
+                    kubectl apply -f %K8S_SERVICE_PATH% --validate=false
+                    '''
+                }
             }
         }
     }
