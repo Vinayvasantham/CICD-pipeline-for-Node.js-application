@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh """
                 docker build -t ${DOCKER_IMAGE} .
-                docker login -u your-dockerhub-username -p your-dockerhub-password
+                docker login -u vinayvasantham -p Vinay@123
                 docker push ${DOCKER_IMAGE}
                 """
             }
