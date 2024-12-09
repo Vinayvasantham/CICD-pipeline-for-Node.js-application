@@ -30,7 +30,7 @@ pipeline {
                 script {
                     bat '''
                     echo Building Docker Image
-                    docker build -t vinayvasantham/nodejs-app:%BUILD_NUMBER% .
+                    docker build -t vinayvasantham/nodejs-app:latest .
                     '''
                 }
             }
