@@ -27,8 +27,16 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('Sonarqube') {  // 'SonarQube' is the name configured in Jenkins
-                    bat 'npx sonarqube-scanner'
+                script {
+                    withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONARQUBE_TOKEN')]) {
+                        bat """
+                        sonar-scanner.bat ^
+                          -D"sonar.projectKey=Node-js-App" ^
+                          -D"sonar.sources=." ^
+                          -D"sonar.host.url=http://localhost:9000" ^
+                          -D"sonar.login=%SONARQUBE_TOKEN%"
+                        """
+                    }
                 }
             }
         }
