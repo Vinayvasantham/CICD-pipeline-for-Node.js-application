@@ -25,6 +25,13 @@ pipeline {
                 bat 'npm test'
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('Sonarqube') {  // 'SonarQube' is the name configured in Jenkins
+                    bat 'npx sonarqube-scanner'
+                }
+            }
+        }
         stage('Build Docker') {
             steps {
                 script {
@@ -63,32 +70,32 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            mail to: 'vinayvasantham7@gmail.com',
-                 subject: "Deployment Success: ${DOCKER_IMAGE}",
-                 body: """
-                 The application was successfully deployed to Kubernetes.
+    // post {
+    //     success {
+    //         mail to: 'vinayvasantham7@gmail.com',
+    //              subject: "Deployment Success: ${DOCKER_IMAGE}",
+    //              body: """
+    //              The application was successfully deployed to Kubernetes.
                  
-                 Deployment Details:
-                 - Docker Image: ${DOCKER_IMAGE}
-                 - Job Name: ${env.JOB_NAME}
-                 - Build Number: ${env.BUILD_NUMBER}
-                 - Build URL: ${env.BUILD_URL}
-                 """
-        }
-        failure {
-            mail to: 'vinayvasantham7@gmail.com',
-                 subject: "Deployment Failure: ${DOCKER_IMAGE}",
-                 body: """
-                 The deployment failed. Please check the Jenkins logs for details.
+    //              Deployment Details:
+    //              - Docker Image: ${DOCKER_IMAGE}
+    //              - Job Name: ${env.JOB_NAME}
+    //              - Build Number: ${env.BUILD_NUMBER}
+    //              - Build URL: ${env.BUILD_URL}
+    //              """
+    //     }
+    //     failure {
+    //         mail to: 'vinayvasantham7@gmail.com',
+    //              subject: "Deployment Failure: ${DOCKER_IMAGE}",
+    //              body: """
+    //              The deployment failed. Please check the Jenkins logs for details.
                  
-                 Deployment Details:
-                 - Docker Image: ${DOCKER_IMAGE}
-                 - Job Name: ${env.JOB_NAME}
-                 - Build Number: ${env.BUILD_NUMBER}
-                 - Build URL: ${env.BUILD_URL}
-                 """
-        }
-    }
+    //              Deployment Details:
+    //              - Docker Image: ${DOCKER_IMAGE}
+    //              - Job Name: ${env.JOB_NAME}
+    //              - Build Number: ${env.BUILD_NUMBER}
+    //              - Build URL: ${env.BUILD_URL}
+    //              """
+    //     }
+    // }
 }
