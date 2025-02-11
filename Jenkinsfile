@@ -28,14 +28,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONARQUBE_TOKEN')]) {
-                        bat """
-                        sonar-scanner.bat ^
-                          -D"sonar.projectKey=Node-js-App" ^
-                          -D"sonar.sources=." ^
-                          -D"sonar.host.url=http://localhost:9000" ^
-                          -D"sonar.login=%SONARQUBE_TOKEN%"
-                        """
+                    withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
+                        bat '''
+                        docker run --rm -v %CD%:/usr/src --network="host" sonarsource/sonar-scanner-cli:latest ^
+                        -Dsonar.projectKey=Node-js-App ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.login=%SONAR_TOKEN%
+                        '''
                     }
                 }
             }
