@@ -40,6 +40,11 @@ pipeline {
                 }
             }
         }
+        // stage('Dependency Security Scan') {
+        //     steps {
+        //         bat 'snyk test --json > snyk_report.json'
+        //     }
+        // }
         stage('Build Docker') {
             steps {
                 script {
@@ -47,6 +52,22 @@ pipeline {
                     echo Building Docker Image
                     docker build -t vinayvasantham/nodejs-app:latest .
                     '''
+                }
+            }
+        }
+        stage('Trivy Security Scan') {
+            steps {
+                script {
+                    def scanResult = bat(script: '''
+                    docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v C:/Users/vinay/.cache/trivy:/root/.cache/ \
+                        aquasec/trivy image --exit-code 1 --severity HIGH,CRITICAL vinayvasantham/nodejs-app:latest
+                    ''', returnStatus: true)
+
+                    if (scanResult != 0) {
+                        error("❌ Trivy found vulnerabilities in the Docker image! Fix them before proceeding.")
+                    }
                 }
             }
         }
