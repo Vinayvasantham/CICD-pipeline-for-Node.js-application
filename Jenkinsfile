@@ -30,7 +30,7 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
                         bat '''
-                        docker run --rm -v "C:\ProgramData\Jenkins\.jenkins\workspace\CICD pipeline for Node.js application:/usr/src" --network="host" \
+                        docker run --rm -v "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\CICD pipeline for Node.js application:/usr/src" --network="host" \
                             sonarsource/sonar-scanner-cli:latest \
                             -Dsonar.projectKey=Node-js-App \
                             -Dsonar.sources=. \
