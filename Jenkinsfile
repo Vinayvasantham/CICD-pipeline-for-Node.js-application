@@ -60,14 +60,15 @@ pipeline {
                 script {
                     try {
                         def scanOutput = bat(script: '''
+                        chcp 65001 > nul && set LC_ALL=en_US.UTF-8 &&
                         docker run --rm ^
                             -v "//var/run/docker.sock:/var/run/docker.sock" ^
                             -v "C:/Users/vinay/.cache/trivy:/root/.cache/" ^
                             aquasec/trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL vinayvasantham/nodejs-app:latest
                         ''', returnStdout: true).trim()
-        
+            
                         echo "🔍 Trivy Scan Output:\n${scanOutput}"
-        
+            
                         if (scanOutput.contains("CRITICAL") || scanOutput.contains("HIGH")) {
                             error("❌ Trivy found vulnerabilities in the Docker image! Fix them before proceeding.")
                         }
@@ -77,7 +78,6 @@ pipeline {
                 }
             }
         }
-
         stage('Push Docker Image') {
             steps {
                 script {
