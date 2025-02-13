@@ -60,9 +60,10 @@ pipeline {
                 script {
                     try {
                         def scanOutput = bat(script: '''
-                        chcp 65001 > nul &&
+                        @echo off
+                        chcp 65001 > nul
                         docker run --rm ^
-                            -v "C:/var/run/docker.sock:/var/run/docker.sock" ^
+                            -v "C:/ProgramData/docker.sock:/var/run/docker.sock" ^
                             -v "C:/Users/vinay/.cache/trivy:/root/.cache/" ^
                             aquasec/trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL vinayvasantham/nodejs-app:latest
                         ''', returnStdout: true).trim()
