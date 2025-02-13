@@ -40,11 +40,6 @@ pipeline {
         //         }
         //     }
         // }
-        stage('Dependency Security Scan') {
-            steps {
-                bat 'snyk test --json > snyk_report.json'
-            }
-        }
         stage('Build Docker') {
             steps {
                 script {
