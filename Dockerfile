@@ -1,5 +1,5 @@
-# Use Node.js 18 with Debian 12 slim
-FROM node:18-bookworm-slim
+# Use Node.js 16 with Debian 12 slim
+FROM node:16-bookworm-slim
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
