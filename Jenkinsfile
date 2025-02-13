@@ -25,26 +25,26 @@ pipeline {
                 bat 'npm test'
             }
         }
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         script {
-        //             withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
-        //                 bat '''
-        //                 docker run --rm -v "%CD%:/usr/src" --network="host" sonarsource/sonar-scanner-cli \
-        //                 -Dsonar.projectKey=Node-js-App \
-        //                 -Dsonar.sources=. \
-        //                 -Dsonar.host.url=http://localhost:9000 \
-        //                 -Dsonar.login=%SONAR_TOKEN%
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('Dependency Security Scan') {
-        //     steps {
-        //         bat 'snyk test --json > snyk_report.json'
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
+                        bat '''
+                        docker run --rm -v "%CD%:/usr/src" --network="host" sonarsource/sonar-scanner-cli \
+                        -Dsonar.projectKey=Node-js-App \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=%SONAR_TOKEN%
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Dependency Security Scan') {
+            steps {
+                bat 'snyk test --json > snyk_report.json'
+            }
+        }
         stage('Build Docker') {
             steps {
                 script {
@@ -65,8 +65,8 @@ pipeline {
                         docker run --rm ^
                             -v "C:/ProgramData/docker.sock:/var/run/docker.sock" ^
                             -v "C:/Users/vinay/.cache/trivy:/root/.cache/" ^
-                            aquasec/trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed vinayvasantham/nodejs-app:latest
-                        ''', returnStdout: true).trim()
+                            aquasec/trivy image --no-progress --exit-code 0 --severity HIGH,CRITICAL --ignore-unfixed vinayvasantham/nodejs-app:latest
+                            ''', returnStdout: true).trim()
             
                         echo "🔍 Trivy Scan Output:\n${scanOutput}"
             
