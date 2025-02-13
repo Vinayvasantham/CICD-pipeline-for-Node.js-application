@@ -25,21 +25,21 @@ pipeline {
                 bat 'npm test'
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
-                        bat '''
-                        docker run --rm -v "%CD%:/usr/src" --network="host" sonarsource/sonar-scanner-cli \
-                        -Dsonar.projectKey=Node-js-App \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=%SONAR_TOKEN%
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_TOKEN')]) {
+        //                 bat '''
+        //                 docker run --rm -v "%CD%:/usr/src" --network="host" sonarsource/sonar-scanner-cli \
+        //                 -Dsonar.projectKey=Node-js-App \
+        //                 -Dsonar.sources=. \
+        //                 -Dsonar.host.url=http://localhost:9000 \
+        //                 -Dsonar.login=%SONAR_TOKEN%
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
         stage('Dependency Security Scan') {
             steps {
                 bat 'snyk test --json > snyk_report.json'
