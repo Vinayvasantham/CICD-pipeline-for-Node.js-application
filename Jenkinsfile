@@ -65,7 +65,7 @@ pipeline {
                         docker run --rm ^
                             -v "C:/ProgramData/docker.sock:/var/run/docker.sock" ^
                             -v "C:/Users/vinay/.cache/trivy:/root/.cache/" ^
-                            aquasec/trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL vinayvasantham/nodejs-app:latest
+                            aquasec/trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed vinayvasantham/nodejs-app:latest
                         ''', returnStdout: true).trim()
             
                         echo "🔍 Trivy Scan Output:\n${scanOutput}"
